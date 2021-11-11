@@ -37,9 +37,8 @@ module Hutch
       attr_reader :queue_mode, :queue_type, :initial_group_size
 
       # Explicitly set the queue name
-      def queue_name(name, options = {})
+      def queue_name(name)
         @queue_name = name
-        @options = options
       end
 
       # Explicitly set the queue mode to 'lazy'
@@ -64,6 +63,11 @@ module Hutch
       # Prefer using a policy to this DSL: https://www.rabbitmq.com/parameters.html#policies
       def arguments(arguments = {})
         @arguments = arguments
+      end
+
+      # Configures queue options that will be passed when declaring the queue.
+      def queue_options(options)
+        @queue_options = options
       end
 
       # Set custom serializer class, override global value
@@ -95,7 +99,7 @@ module Hutch
       def get_options
         default_options = { durable: true }
 
-        all_options = default_options.merge(@options || {})
+        all_options = default_options.merge(@queue_options || {})
         all_options[:arguments] = get_arguments
 
         all_options
